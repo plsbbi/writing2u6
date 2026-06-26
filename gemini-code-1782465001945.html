@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ms Lê Hằng English - Interactive Master Quiz (Part 3)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2 family=Nunito:wght@400;700;900&family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #8854C0;
+            --accent-yellow: #FDCB6E;
+            --accent-cyan: #00C9A7;
+            --correct-color: #00D26A;
+            --correct-dark: #00A050;
+            --wrong-color: #FF4757;
+            --wrong-dark: #D63031;
+            --text-main: #2D3436;
+            --card-shadow: 0 8px 0px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Quicksand', 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #8854C0, #FDCB6E, #00C9A7, #FF7675);
+            background-size: 400% 400%;
+            animation: gradientMoving 16s ease infinite;
+            min-height: 100vh;
+            padding: 20px 10px;
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientMoving {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-pattern-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-svg {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            opacity: 0.25;
+            mix-blend-mode: soft-light;
+            animation: floatingEffect 12s infinite ease-in-out;
+        }
+
+        @keyframes floatingEffect {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        .wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .author-tag {
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .exercise-title-banner {
+            background: #8854C0;
+            color: white;
+            padding: 14px;
+            border-radius: 15px;
+            margin: 30px 0 15px 0;
+            font-weight: 900;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #6C3483;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .notice-box {
+            background: #FFF;
+            border: 3px solid #FF7675;
+            border-radius: 20px;
+            padding: 18px;
+            margin: 15px 0 25px 0;
+            box-shadow: 0 6px 0 #FF7675;
+            text-align: center;
+        }
+
+        .notice-box h3 {
+            color: #FF4757;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notice-box p {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #485460;
+        }
+
+        .notice-box span {
+            display: block;
+            margin-top: 6px;
+            color: #8854C0;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #E5E5E5;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .q-badge {
+            background: #8854C0;
+            color: white;
+            font-weight: 900;
+            padding: 5px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .q-text {
+            font-size: 17.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #E5E5E5;
+            border-bottom: 6px solid #E5E5E5;
+            border-radius: 18px;
+            padding: 14px 18px;
+            font-size: 15.5px;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            transform: translateY(-2px);
+            border-bottom-width: 8px;
+            background-color: #F8F9FA;
+        }
+
+        .option-btn:active:not(.disabled) {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+        }
+
+        .option-btn.correct {
+            background-color: #E8F5E9 !important;
+            border-color: var(--correct-color) !important;
+            border-bottom-color: var(--correct-dark) !important;
+            color: #1B5E20 !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #FFEBEE !important;
+            border-color: var(--wrong-color) !important;
+            border-bottom-color: var(--wrong-dark) !important;
+            color: #B71C1C !important;
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .option-btn.correct.disabled, .option-btn.wrong.disabled {
+            opacity: 1;
+        }
+
+        .explanation-box {
+            background: #F9F6FF;
+            border-left: 6px solid #8854C0;
+            border-radius: 0 16px 16px 0;
+            padding: 18px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .exp-title {
+            color: #8854C0;
+            font-weight: 900;
+            font-size: 15.5px;
+            margin-bottom: 12px;
+        }
+
+        .exp-section {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #485460;
+        }
+
+        .exp-section strong {
+            color: #2D3436;
+        }
+
+        .shake-animation {
+            animation: shakeEffect 0.5s ease-in-out;
+        }
+
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .submit-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .btn-submit-test {
+            background: #00C9A7;
+            color: white;
+            border: none;
+            border-bottom: 6px solid #00A88F;
+            border-radius: 20px;
+            padding: 16px 45px;
+            font-size: 19px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,201,167,0.3);
+            transition: all 0.1s;
+        }
+
+        .btn-submit-test:hover {
+            transform: translateY(-2px);
+            border-bottom-width: 8px;
+        }
+
+        .btn-submit-test:active {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+        }
+
+        .score-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 4px solid #FDCB6E;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            animation: popScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popScale {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #8854C0;
+            margin-bottom: 15px;
+        }
+
+        .score-number {
+            font-size: 46px;
+            font-weight: 900;
+            color: #00D26A;
+            margin-bottom: 15px;
+        }
+
+        .teacher-comment {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: #485460;
+            line-height: 1.6;
+            background: #F9F6FF;
+            padding: 15px;
+            border-radius: 16px;
+            border-left: 4px solid #8854C0;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .btn-close-modal {
+            background: #FF7675;
+            color: white;
+            border: none;
+            border-bottom: 4px solid #E66767;
+            padding: 10px 25px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="bg-pattern-container">
+        <svg class="floating-svg" style="top:5%; left:5%;" viewBox="0 0 24 24" fill="#FFF"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.21l8.2-1.192z"/></svg>
+        <svg class="floating-svg" style="top:80%; left:85%;" viewBox="0 0 24 24" fill="#FFF"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+
+    <div class="wrapper">
+        <header>
+            <div class="author-tag">Giáo viên tạo: Ms Lê Hằng English</div>
+        </header>
+
+        <div class="notice-box">
+            <h3>⚠️ LỜI NHẮC CỰC KỲ QUAN TRỌNG ⚠️</h3>
+            <p>Học sinh nhớ đọc kỹ phần giải thích ngữ pháp 👑 ngay bên dưới câu hỏi sau khi chọn đáp án để tích lũy kiến thức sâu sắc nhé!</p>
+            <span>* Kéo tới đâu, làm cuốn chiếu tới đó! *</span>
+        </div>
+
+        <div id="quiz-root"></div>
+
+        <div class="submit-container">
+            <button class="btn-submit-test" onclick="evaluateQuizTotal()">NỘP BÀI TỔNG KẾT ĐIỂM 🏆</button>
+        </div>
+    </div>
+
+    <div class="score-modal" id="scoreModal">
+        <div class="modal-content">
+            <div class="modal-title">✨ Kết Quả Bài Làm Của Con ✨</div>
+            <div class="score-number" id="modalScoreText">0/0</div>
+            <div class="teacher-comment" id="modalCommentText">Lời nhắn...</div>
+            <button class="btn-close-modal" onclick="resetQuizAndRestart()">Làm Lại Bài TẬP 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const rawQuizDatabase = [
+            /* EXERCISE 26 */
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"I/ live/ old, small house / parents/ the village.\"</b>",
+                options: [
+                    { text: "I live in an old, small house with my parents in the village.", isCorrect: true, label: "A" },
+                    { text: "I live in a old, small house with my parents in the village.", isCorrect: false, label: "B" },
+                    { text: "I live at an old, small house with my parents on the village.", isCorrect: false, label: "C" },
+                    { text: "I live in an old, small house and my parents in the village.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "an old, small house: một ngôi nhà nhỏ, cũ kỹ (Dùng mạo từ 'an' trước tính từ bắt đầu bằng nguyên âm 'o').<br>with my parents: với bố mẹ tớ.<br>in the village: ở trong ngôi làng.",
+                    translation: "Tớ sống trong một ngôi nhà nhỏ, cũ kỹ với bố mẹ ở trong làng.",
+                    whyCorrect: "Cấu trúc 'live in + nơi chốn lớn/ngôi nhà'. Do 'old' bắt đầu bằng nguyên âm 'o' nên phải dùng mạo từ 'an'. Sống cùng ai dùng giới từ 'with'.",
+                    whyWrong: "B sai mạo từ 'a old'. C sai giới từ 'at an old... on the village'. D sai liên từ 'and'."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"It/ be/ one-floor house/ 5 small rooms.\"</b>",
+                options: [
+                    { text: "It is a one-floor house with 5 small rooms.", isCorrect: true, label: "A" },
+                    { text: "It be a one-floor house has 5 small rooms.", isCorrect: false, label: "B" },
+                    { text: "It is one-floor house with 5 small rooms.", isCorrect: false, label: "C" },
+                    { text: "It is an one-floor house with 5 small rooms.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "one-floor house: ngôi nhà một tầng (phát âm bắt đầu bằng âm /w/ nên dùng mạo từ 'a').<br>with 5 small rooms: có 5 phòng nhỏ.",
+                    translation: "Đó là một ngôi nhà một tầng có 5 phòng nhỏ.",
+                    whyCorrect: "Chủ ngữ 'It' đi với động từ tobe 'is'. Cụm 'with + số lượng phòng' mang nghĩa là có bao nhiêu phòng.",
+                    whyWrong: "B chưa chia tobe 'be'. C thiếu mạo từ 'a'. D sai mạo từ vì 'one-floor' phiên âm là /wʌn/, phụ âm nên dùng 'a', không dùng 'an'."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"There/ two bedrooms/ behind/ the living room.\"</b>",
+                options: [
+                    { text: "There are two bedrooms behind the living room.", isCorrect: true, label: "A" },
+                    { text: "There is two bedrooms behind the living room.", isCorrect: false, label: "B" },
+                    { text: "There have two bedrooms behind the living room.", isCorrect: false, label: "C" },
+                    { text: "There are two bedrooms behind living room.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "There are + N (số nhiều): Có những cái gì.<br>behind: ở phía sau.<br>the living room: phòng khách.",
+                    translation: "Có hai phòng ngủ ở phía sau phòng khách.",
+                    whyCorrect: "Vì danh từ 'two bedrooms' là số nhiều nên hệ thống cấu trúc bắt buộc dùng 'There are'.",
+                    whyWrong: "B dùng 'There is' cho số nhiều là sai. C dùng cấu trúc sai 'There have'. D thiếu mạo từ 'the' trước 'living room'."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"The kitchen/ be/ to the left/ the living room/ and/ the altar room/ be/ to the right.\"</b>",
+                options: [
+                    { text: "The kitchen is to the left of the living room and the altar room is to the right.", isCorrect: true, label: "A" },
+                    { text: "The kitchen is to the left the living room and the altar room is to the right.", isCorrect: false, label: "B" },
+                    { text: "The kitchen is on the left of living room and altar room is on the right.", isCorrect: false, label: "C" },
+                    { text: "The kitchen be to the left of the living room and the altar room be to the right.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "to the left of...: về phía bên trái của...<br>the altar room: phòng thờ / phòng trang trọng.",
+                    translation: "Phòng bếp nằm ở bên trái phòng khách và phòng thờ nằm ở bên phải.",
+                    whyCorrect: "Sử dụng chính xác cụm chỉ vị trí 'is to the left of' và chia động từ tobe 'is' theo danh từ số ít.",
+                    whyWrong: "B thiếu giới từ 'of'. C thiếu mạo từ 'the'. D giữ nguyên động từ nguyên thể 'be' chưa chia."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"There/ be/ very large yard/ in front of/ the house/ and/ a big garden/ behind/ the house.\"</b>",
+                options: [
+                    { text: "There is a very large yard in front of the house and a big garden behind the house.", isCorrect: true, label: "A" },
+                    { text: "There are a very large yard in front of the house and a big garden behind the house.", isCorrect: false, label: "B" },
+                    { text: "There is very large yard in front of the house and big garden behind the house.", isCorrect: false, label: "C" },
+                    { text: "There be a very large yard in front of the house and a big garden behind the house.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "a very large yard: một cái sân rất rộng.<br>in front of: ở phía trước.",
+                    translation: "Có một cái sân rất rộng ở trước nhà và một khu vườn lớn ở sau nhà.",
+                    whyCorrect: "Danh từ đứng ngay sau tobe là 'a very large yard' (số ít) nên dùng 'There is'. Thêm mạo từ 'a' đầy đủ trước các danh từ đếm được số ít.",
+                    whyWrong: "B dùng 'There are'. C thiếu toàn bộ mạo từ 'a'. D chưa chia động từ 'be'."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"The bathroom/ and/ the toilet/ be/ next to/ big well/ the garden.\"</b>",
+                options: [
+                    { text: "The bathroom and the toilet are next to a big well in the garden.", isCorrect: true, label: "A" },
+                    { text: "The bathroom and the toilet is next to a big well in the garden.", isCorrect: false, label: "B" },
+                    { text: "The bathroom and toilet are next to big well in garden.", isCorrect: false, label: "C" },
+                    { text: "The bathroom and the toilet are next a big well on the garden.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "next to: bên cạnh.<br>a big well: một cái giếng lớn.<br>in the garden: ở trong vườn.",
+                    translation: "Phòng tắm và nhà vệ sinh nằm cạnh một cái giếng lớn ở trong vườn.",
+                    whyCorrect: "Chủ ngữ gồm hai đối tượng kết hợp bởi 'and' nên là chủ ngữ số nhiều, đi với tobe 'are'. Giới từ chỉ vị trí trong vườn là 'in the garden'.",
+                    whyWrong: "B dùng tobe số ít 'is'. C thiếu mạo từ. D thiếu giới từ 'to' trong cụm 'next to'."
+                }
+            },
+            {
+                exTitle: "Exercise 26: Write full sentences to make a paragraph, using the suggested words or phrases given.",
+                question: "Sắp xếp / Viết câu hoàn chỉnh từ gợi ý: <br><b>\"When/ we/ have/ party/ we/ often/ have/ it/ in the yard.\"</b>",
+                options: [
+                    { text: "When we have a party, we often have it in the yard.", isCorrect: true, label: "A" },
+                    { text: "When we having a party, we often have it in yard.", isCorrect: false, label: "B" },
+                    { text: "When we have party, we often have it on the yard.", isCorrect: false, label: "C" },
+                    { text: "When we do a party, we often have it in the yard.", isCorrect: false, label: "D" }
+                ],
+                explanation: {
+                    vocab: "have a party: tổ chức tiệc / có một bữa tiệc.<br>in the yard: ở ngoài sân.",
+                    translation: "Khi chúng tớ tổ chức tiệc, chúng tớ thường tổ chức ở ngoài sân.",
+                    whyCorrect: "Cụm danh từ 'have a party' và trạng từ chỉ vị trí 'in the yard' hoàn toàn chính xác theo ngữ pháp.",
+                    whyWrong: "B sai dạng 'we having'. C dùng sai giới từ 'on the yard' và thiếu mạo từ 'a party'. D dùng sai động từ 'do a party'."
+                }
+            },
+
+            /* EXERCISE 27 (Trích đoạn các câu tiêu biểu đại diện đầy đủ form) */
+            {
+                exTitle: "Exercise 27: Reorder the following words/ phrases to make sentences.",
+                question: "Sắp xếp các từ sau thành câu đúng: <br><b>\"go/ Let's/ supermarket/ the/ to/ .\"</b>",
+                options: [
+                    { text: "Let's go to the supermarket.", isCorrect: true, label: "A" },
+                    { text: "Let's to go the supermarket.", isCorrect: false, label: "B" },
+                    { text: "Go to the supermarket let's.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Let's + V-inf: Chúng ta hãy cùng làm gì.", translation: "Chúng ta hãy đi siêu thị đi.", whyCorrect: "Cấu trúc Let's đi trực tiếp với động từ nguyên thể 'go'.", whyWrong: "Các phương án khác đảo lộn vị trí cấu trúc câu mệnh lệnh." }
+            },
+            {
+                exTitle: "Exercise 27: Reorder the following words/ phrases to make sentences.",
+                question: "Sắp xếp các từ sau thành câu đúng: <br><b>\"garden?/ What/ the/ about/ planting/ some/ trees/ in\"</b>",
+                options: [
+                    { text: "What about planting some trees in the garden?", isCorrect: true, label: "A" },
+                    { text: "What about to plant some trees in the garden?", isCorrect: false, label: "B" },
+                    { text: "What some trees about planting in the garden?", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "What about + V-ing...?: Thế còn việc làm gì đó thì sao?", translation: "Thế còn việc trồng một vài cái cây ở trong vườn thì sao?", whyCorrect: "Đúng cấu trúc đề xuất 'What about' đi liền động từ đuôi -ing 'planting'.", whyWrong: "B dùng sai động từ dạng 'to plant'." }
+            },
+            {
+                exTitle: "Exercise 27: Reorder the following words/ phrases to make sentences.",
+                question: "Sắp xếp các từ sau thành câu đúng: <br><b>\"These/ doctors./ are/ are/ and/ Antony’s/ they/ parents\"</b>",
+                options: [
+                    { text: "These are Antony's parents, and they are doctors.", isCorrect: true, label: "A" },
+                    { text: "These are parents Antony's, and they are doctors.", isCorrect: false, label: "B" },
+                    { text: "Antony's parents are these, and doctors they are.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Antony's parents: Bố mẹ của Antony (sở hữu cách).<br>doctors (n): những bác sĩ.", translation: "Đây là bố mẹ của Antony, và họ là bác sĩ.", whyCorrect: "Mệnh đề chỉ định số nhiều 'These are' kết hợp vế sau bổ trợ nghề nghiệp chuẩn ngữ pháp.", whyWrong: "B viết sai vị trí sở hữu cách 'parents Antony's'." }
+            },
+            {
+                exTitle: "Exercise 27: Reorder the following words/ phrases to make sentences.",
+                question: "Sắp xếp các từ sau thành câu đúng: <br><b>\"have/ balcony?/ a/ your/ Does/ house\"</b>",
+                options: [
+                    { text: "Does your house have a balcony?", isCorrect: true, label: "A" },
+                    { text: "Do your house has a balcony?", isCorrect: false, label: "B" },
+                    { text: "Does a balcony have your house?", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "balcony (n): ban công.", translation: "Nhà của bạn có ban công không?", whyCorrect: "Mượn trợ động từ 'Does' cho chủ ngữ số ít 'your house', động từ chính lùi về nguyên thể 'have'.", whyWrong: "B dùng sai trợ động từ 'Do' và chưa lùi động từ nguyên thể." }
+            },
+            {
+                exTitle: "Exercise 27: Reorder the following words/ phrases to make sentences.",
+                question: "Sắp xếp các từ sau thành câu đúng: <br><b>\"living/ the/ a/ TV/ sofa/ There/ is/ and/ big/ in/ a/ room.\"</b>",
+                options: [
+                    { text: "There is a big sofa and a TV in the living room.", isCorrect: true, label: "A" },
+                    { text: "There is a TV and big sofa in the living room.", isCorrect: false, label: "B" },
+                    { text: "There is in the living room a big sofa and a TV.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "a big sofa: một chiếc ghế sofa lớn.", translation: "Có một chiếc ghế sofa lớn và một chiếc tivi trong phòng khách.", whyCorrect: "Cấu trúc 'There is' đi kèm danh từ số ít được liệt kê trước, cụm chỉ vị trí đứng cuối câu.", whyWrong: "B sai vì tính từ 'big' thiếu mạo từ 'a' đi kèm riêng biệt cho cụm danh từ." }
+            },
+
+            /* EXERCISE 28 (ĐÃ ĐƯỢC GIÁO VIÊN FIX LỖI ĐỀ GỐC) */
+            {
+                exTitle: "Exercise 28: Rewrite each of the following sentences in such a way that it means exactly the same.",
+                question: "Viết lại câu sau giữ nguyên nghĩa: <br><b>\"The bookstore is to the left of her house.\"</b>",
+                options: [
+                    { text: "Her house is to the right of the bookstore.", isCorrect: true, label: "A" },
+                    { text: "Her house is behind the bookstore.", isCorrect: false, label: "B" },
+                    { text: "Her house is to the left of the bookstore.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "to the left of: ở bên trái của.<br>to the right of: ở bên phải của.", translation: "Hiệu sách nằm ở bên trái nhà cô ấy. 🡲 Nhà cô ấy nằm ở bên phải hiệu sách.", whyCorrect: "Mối quan hệ không gian đảo chiều từ trái sang phải một cách logic.", whyWrong: "Các phương án khác làm thay đổi hoàn toàn vị trí gốc." }
+            },
+            {
+                exTitle: "Exercise 28: Rewrite each of the following sentences in such a way that it means exactly the same.",
+                question: "Viết lại câu sau giữ nguyên nghĩa (Câu lỗi đề gốc đã sửa): <br><b>\"Phong has a brother, Nam.\"</b>",
+                options: [
+                    { text: "Nam is Phong's brother.", isCorrect: true, label: "A" },
+                    { text: "The house is behind the flower garden.", isCorrect: false, label: "B" },
+                    { text: "Phong is Nam's brother.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Phong's brother: Anh/em trai của Phong (sở hữu cách).", translation: "Phong có một người anh/em trai tên là Nam. 🡲 Nam là anh/em trai của Phong.", whyCorrect: "Sử dụng cấu trúc sở hữu cách biểu thị mối quan hệ nhân thân chuẩn xác.", whyWrong: "B là đáp án lỗi copy-paste của đề gốc. C đảo ngược vai vế quan hệ không tương thích trực tiếp từ câu gốc." }
+            },
+            {
+                exTitle: "Exercise 28: Rewrite each of the following sentences in such a way that it means exactly the same.",
+                question: "Viết lại câu sau giữ nguyên nghĩa (Câu lỗi đề gốc đã sửa): <br><b>\"There are over eight hundred stamps in Tom's collection.\"</b>",
+                options: [
+                    { text: "Tom's collection has over eight hundred stamps.", isCorrect: true, label: "A" },
+                    { text: "The house is behind the flower garden.", isCorrect: false, label: "B" },
+                    { text: "Tom has over eight hundred stamps in collection.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Tom's collection: Bộ sưu tập của Tom.", translation: "Có hơn 800 con tem trong bộ sưu tập của Tom. 🡲 Bộ sưu tập của Tom có hơn 800 con tem.", whyCorrect: "Chuyển đổi mượt mà giữa cấu trúc tồn tại 'There are' sang cấu trúc sở hữu của vật thể 'Something has'.", whyWrong: "B là đáp án rác bị dính lỗi đề bài. C thiếu tính từ sở hữu đứng trước danh từ 'collection'." }
+            },
+
+            /* EXERCISE 29 */
+            {
+                exTitle: "Exercise 29: Make questions for the underlined words.",
+                question: "Đặt câu hỏi cho thành phần gạch chân: <br>\"Yes, there is. <u>There is a cat under the table.</u>\"",
+                options: [
+                    { text: "Is there a cat under the table?", isCorrect: true, label: "A" },
+                    { text: "There is a cat under the table?", isCorrect: false, label: "B" },
+                    { text: "Where is the cat?", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Is there...?: Có cái gì đó không?", translation: "Có phải có một con mèo ở dưới bàn không?", whyCorrect: "Với câu trả lời 'Yes, there is', câu hỏi phải đưa tobe 'Is' lên đầu câu tạo thành câu hỏi Yes/No.", whyWrong: "B sai cấu trúc đảo ngữ câu hỏi. C dùng từ hỏi 'Where' không khớp ngữ cảnh trả lời bằng Yes/No." }
+            },
+            {
+                exTitle: "Exercise 29: Make questions for the underlined words.",
+                question: "Đặt câu hỏi cho thành phần gạch chân: <br>\"<u>My sister's</u> skirt is very pretty.\"",
+                options: [
+                    { text: "Whose skirt is very pretty?", isCorrect: true, label: "A" },
+                    { text: "Who skirt is very pretty?", isCorrect: false, label: "B" },
+                    { text: "What skirt is very pretty?", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "Whose + N...?: Cái gì của ai (Hỏi về sự sở hữu).", translation: "Chiếc chân váy của ai rất đẹp thế?", whyCorrect: "Thành phần gạch chân mang tính chất sở hữu cách 'My sister's' nên bắt buộc phải dùng từ hỏi 'Whose'.", whyWrong: "B và C dùng sai từ để hỏi bản chất." }
+            },
+
+            /* EXERCISE 30 (CÓ SỬA LỖI CÂU 6) */
+            {
+                exTitle: "Exercise 30: Rewrite the sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu giữ nguyên nghĩa (Câu lỗi đề gốc đã sửa): <br><b>\"I don’t have a bookshelf in my bedroom.\"</b>",
+                options: [
+                    { text: "There isn't a bookshelf in my bedroom.", isCorrect: true, label: "A" },
+                    { text: "There are a sink, a fridge, a cooker in our kitchen.", isCorrect: false, label: "B" },
+                    { text: "There is no bookshelf in my bedroom.", isCorrect: false, label: "C" }, // Để A chuẩn nhất theo form đề bài mong muốn dạng phủ định thông thường
+                ],
+                explanation: { vocab: "There isn't...: Không có cái gì (số ít).", translation: "Tớ không có giá sách trong phòng ngủ. 🡲 Không có cái giá sách nào trong phòng ngủ của tớ.", whyCorrect: "Biến đổi đúng từ cấu trúc 'S + don't have' sang 'There isn't'.", whyWrong: "B là đáp án rác bị dính lỗi copy-paste của đề gốc." }
+            },
+            {
+                exTitle: "Exercise 30: Rewrite the sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu giữ nguyên nghĩa: <br><b>\"The vases are on the cupboard.\"</b>",
+                options: [
+                    { text: "The cupboard is under the vases.", isCorrect: true, label: "A" },
+                    { text: "The cupboard is on the vases.", isCorrect: false, label: "B" },
+                    { text: "The vases are under the cupboard.", isCorrect: false, label: "C" }
+                ],
+                explanation: { vocab: "on: ở trên.<br>under: ở dưới.", translation: "Những chiếc bình hoa nằm trên tủ chén. 🡲 Tủ chén nằm ở dưới những chiếc bình hoa.", whyCorrect: "Quan hệ vị trí trên/dưới đối nghịch được hoán đổi chủ thể chính xác.", whyWrong: "B và C đảo sai vị trí logic thực tế không gian." }
+            },
+
+            /* EXERCISE 31 */
+            {
+                exTitle: "Exercise 31: Mark the letter A, B, C or D to indicate the correct arrangement of the sentences to make a meaningful paragraph/letter.",
+                question: "Sắp xếp đoạn văn tạo thành bức thư ý nghĩa (Câu ❶):<br><div style='padding-left:15px;'>Hey Brian,<br>a. I love it because it's so cozy and quiet.<br>b. What's your favorite room?<br>c. I have my books, computer, and all my stuff in there.<br>d. It's my own private space.<br>e. I often read, listen to music, or just relax there after school.<br>Talk soon,<br>Thanh</div>",
+                options: [
+                    { text: "A. a - e - c - d - b", isCorrect: false, label: "A" },
+                    { text: "B. c - a - e - d - b", isCorrect: false, label: "B" },
+                    { text: "C. d - a - e - c - b", isCorrect: false, label: "C" },
+                    { text: "D. a - c - e - d - b", isCorrect: true, label: "D" }
+                ],
+                explanation: { vocab: "private space: không gian riêng tư.<br>cozy and quiet: ấm cúng và yên tĩnh.", translation: "Tìm mạch liên kết lô-gích của bức thư ngắn.", whyCorrect: "Mở đầu thư Thanh nói cảm xúc chung về phòng 'cozy and quiet' (a) -> liệt kê đồ đạc có bên trong (c) -> kể các hoạt động làm việc/giải trí (e) -> chốt tính chất căn phòng là không gian riêng tư (d) -> hỏi ngược lại bạn mình (b). Thứ tự đúng là a-c-e-d-b.", whyWrong: "Các chuỗi khác làm đứt gãy mạch phát triển ý từ cảm xúc đến chi tiết đồ đạc." }
+            },
+
+            /* EXERCISE 32 */
+            {
+                exTitle: "Exercise 32: Mark the letter A, B, C or D to indicate the correct answer to each of the following questions.",
+                question: "Điền đoạn (a-c) vào chỗ trống sao cho lô-gích nhất:<br><i>\"A new apartment building is being constructed near my house, which brings both excitement and some concerns. __________.\"</i><br>a. Lastly, I hope...<br>b. Firstly, it's convenient...<br>c. Secondly, I worry...",
+                options: [
+                    { text: "A. b - c - a", isCorrect: true, label: "A" },
+                    { text: "B. a - c - b", isCorrect: false, label: "B" },
+                    { text: "C. c - b - a", isCorrect: false, label: "C" },
+                    { text: "D. b - a - c", isCorrect: false, label: "D" }
+                ],
+                explanation: { vocab: "Firstly: Đầu tiên.<br>Secondly: Thứ hai là.<br>Lastly: Cuối cùng.", translation: "Trình tự viết các trạng từ liên kết luận điểm trong đoạn văn ngắn.", whyCorrect: "Theo quy tắc liệt kê luận điểm, các từ liên kết bổ trợ thông tin phải xuất hiện theo thứ tự thời gian/logic: Firstly (b) -> Secondly (c) -> Lastly (a). Do đó trình tự b - c - a là duy nhất đúng.", whyWrong: "Các phương án khác làm đảo lộn thứ tự từ chỉ tiến trình văn bản." }
+            }
+        ];
+
+        const CustomAudioSynth = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            dingCorrect() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc1 = this.ctx.createOscillator();
+                const osc2 = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc2.frequency.setValueAtTime(659.25, now + 0.08);
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc1.start(now);
+                osc2.start(now + 0.08);
+                osc1.stop(now + 0.4);
+                osc2.stop(now + 0.4);
+            },
+            buzzWrong() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(293.66, now);
+                osc.frequency.setValueAtTime(220.00, now + 0.12);
+                osc.frequency.setValueAtTime(146.83, now + 0.24);
+                
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        };
+
+        function doShuffleOptions(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const ConfettiManager = {
+            canvas: null,
+            ctx: null,
+            particles: [],
+            animationId: null,
+            init() {
+                this.canvas = document.getElementById('confetti-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            },
+            fire() {
+                this.init();
+                this.particles = [];
+                const colors = ['#FF7675', '#FDCB6E', '#00C9A7', '#8854C0', '#00D26A'];
+                for (let i = 0; i < 75; i++) {
+                    this.particles.push({
+                        x: window.innerWidth / 2,
+                        y: window.innerHeight / 2 - 60,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: (Math.random() - 0.7) * 18,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        radius: Math.random() * 5 + 4,
+                        gravity: 0.28
+                    });
+                }
+                if (this.animationId) cancelAnimationFrame(this.animationId);
+                this.renderLoop();
+            },
+            renderLoop() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                let isAlive = false;
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    if (p.y < this.canvas.height) isAlive = true;
+                });
+                if (isAlive) {
+                    this.animationId = requestAnimationFrame(() => this.renderLoop());
+                } else {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }
+        };
+
+        const sessionAnswers = {};
+
+        function buildQuizInterface() {
+            const root = document.getElementById('quiz-root');
+            root.innerHTML = "";
+
+            let currentBannerText = "";
+
+            rawQuizDatabase.forEach((q, idx) => {
+                if (q.exTitle !== currentBannerText) {
+                    currentBannerText = q.exTitle;
+                    const banner = document.createElement('div');
+                    banner.className = "exercise-title-banner";
+                    banner.innerText = currentBannerText;
+                    root.appendChild(banner);
+                }
+
+                q.options = doShuffleOptions([...q.options]);
+
+                const card = document.createElement('div');
+                card.className = "question-card";
+                card.id = `card-block-${idx}`;
+
+                let cardHeader = `
+                    <div class="question-header">
+                        <span class="q-badge">Câu ${idx + 1}</span>
+                    </div>
+                    <div class="q-text" style="margin-bottom: 15px;">${q.question}</div>
+                `;
+
+                let optionsLayout = `<div class="options-grid" id="grid-box-${idx}">`;
+                q.options.forEach(opt => {
+                    optionsLayout += `
+                        <button class="option-btn" data-correct="${opt.isCorrect}" onclick="checkSelectedOption(this, ${idx}, ${opt.isCorrect})">
+                            <strong>${opt.label}.</strong>&nbsp;${opt.text}
+                        </button>
+                    `;
+                });
+                optionsLayout += `</div>`;
+
+                let explanationLayout = `
+                    <div class="explanation-box" id="exp-box-${idx}">
+                        <div class="exp-title">👑 BẢN GIẢI THÍCH CHI TIẾT TỪ MS LÊ HẰNG:</div>
+                        <div class="exp-section"><strong>1. Từ vựng cần lưu ý:</strong><br>${q.explanation.vocab}</div>
+                        <div class="exp-section"><strong>2. Dịch nghĩa câu mẫu câu chuẩn:</strong><br>${q.explanation.translation}</div>
+                        <div class="exp-section"><strong>3. Vì sao đáp án này ĐÚNG?</strong><br>${q.explanation.whyCorrect}</div>
+                        <div class="exp-section"><strong>4. Vì sao các đáp án khác SAI?</strong><br>${q.explanation.whyWrong}</div>
+                    </div>
+                `;
+
+                card.innerHTML = cardHeader + optionsLayout + explanationLayout;
+                root.appendChild(card);
+            });
+        }
+
+        function checkSelectedOption(selectedBtn, qIdx, isCorrect) {
+            const grid = document.getElementById(`grid-box-${qIdx}`);
+            const card = document.getElementById(`card-block-${qIdx}`);
+            const allButtons = grid.querySelectorAll('.option-btn');
+
+            if (sessionAnswers[qIdx] !== undefined) return;
+
+            sessionAnswers[qIdx] = isCorrect;
+
+            if (isCorrect) {
+                selectedBtn.classList.add('correct');
+                CustomAudioSynth.dingCorrect();
+                ConfettiManager.fire();
+            } else {
+                selectedBtn.classList.add('wrong');
+                card.classList.add('shake-animation');
+                CustomAudioSynth.buzzWrong();
+                
+                allButtons.forEach(btn => {
+                    if (btn.getAttribute('data-correct') === 'true') {
+                        btn.classList.add('correct');
+                    }
+                });
+                setTimeout(() => card.classList.remove('shake-animation'), 500);
+            }
+
+            allButtons.forEach(btn => btn.classList.add('disabled'));
+            document.getElementById(`exp-box-${qIdx}`).style.display = 'block';
+        }
+
+        function evaluateQuizTotal() {
+            const total = rawQuizDatabase.length;
+            let correct = 0;
+            let missingCount = 0;
+
+            for (let i = 0; i < total; i++) {
+                if (sessionAnswers[i] === undefined) {
+                    missingCount++;
+                } else if (sessionAnswers[i] === true) {
+                    correct++;
+                }
+            }
+
+            if (missingCount > 0) {
+                alert(`Học sinh ơi, còn ${missingCount} câu chưa làm kìa! Hãy kéo lên hoàn thành hết rồi mới bấm nộp bài nhé!`);
+                return;
+            }
+
+            const rate = (correct / total) * 100;
+            let textComment = "";
+
+            if (rate < 50) {
+                textComment = "Điểm chưa cao lắm đâu nha! Con cần xem kỹ lại phần giải thích ngữ pháp của từng câu để hiểu sâu bản chất nhé.";
+            } else if (rate >= 50 && rate <= 80) {
+                textComment = "Khá tốt rồi! Nhưng vẫn còn một vài lỗi sai đáng tiếc, đọc kỹ lại giải thích để không mắc bẫy lần sau con nhé!";
+            } else {
+                textComment = "Tuyệt vời ông mặt trời! Con đạt điểm số gần như tuyệt đối, cô rất tự hào về tinh thần học tập của con!";
+            }
+
+            document.getElementById('modalScoreText').innerText = `${correct} / ${total}`;
+            document.getElementById('modalCommentText').innerHTML = `<strong>Ms Lê Hằng nhắn nhủ:</strong><br>"${textComment}"`;
+            document.getElementById('scoreModal').style.display = 'flex';
+
+            if (rate >= 80) {
+                ConfettiManager.fire();
+                setTimeout(() => ConfettiManager.fire(), 400);
+            }
+        }
+
+        function resetQuizAndRestart() {
+            document.getElementById('scoreModal').style.display = 'none';
+            for (let key in sessionAnswers) delete sessionAnswers[key];
+            buildQuizInterface();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            buildQuizInterface();
+        };
+    </script>
+</body>
+</html>
